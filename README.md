@@ -8,7 +8,7 @@ methods - one to get or refresh cognito tokens, the other is to verify the id_to
 Before you start, you should create a Cognito User Pool, add an App Client to it, and configure a cognito domain. 
 All of this can be done in the AWS Cognito console.
 
-*The flow assumes you are using Cognito Hosted UI, but the code can be useful for all cases*
+*The flow assumes you are using Cognito Hosted UI, but this code can be useful for other cases too*
 
 ### Cognito config
 
@@ -29,13 +29,13 @@ First you should set the config in ``config.py``.
         'user_pool_id': 'USER_POOL_ID',
     
         # The URL you want to redirect to after authentication
-        'redirect_uri': 'https://YOUR_DOMAIN/login/',
+        'redirect_uri': 'https://YOUR_WEBSITE/login/',
     }
 
 ## Flow:
 
-1) User lands in our website for the first time. They are not authenticated. Redirect to ``cognito_login_url`` - this 
-is the **Cognito Hosted UI**.
+1) User lands in your website for the first time. They are not authenticated. Redirect them to ``cognito_login_url`` - 
+this is the **Cognito Hosted UI**.
 2) In the hosted UI, they successfully log in.
 3) User is redirected to ``redirect_uri``, with request parameter ``code=11111111-2222-3333-4444-555555555555``
 4) We get the cognito id_token, access_token & secret_token, by ``get_cognito_tokens(code=code)``.
@@ -49,7 +49,7 @@ is the **Cognito Hosted UI**.
     ** more info here: https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html
 
 5) Store these tokens for the user
-6) After an hour, id_token expires. Backed code should automatically refresh it by using 
+6) After an hour, id_token and access_token are expired. Backed code should automatically refresh it by using 
    ``get_cognito_tokens(refresh_token=refresh_token)``
 7) After 30 days, refresh token expires. The user should be redirected to the hosted UI and will have to log in again.
 
@@ -58,6 +58,9 @@ is the **Cognito Hosted UI**.
 ### When the user is not logged in, redirect them to ``cognito_login_url``
 
     from config import cognito_login_url
+    
+    # (Assuming you're using flask:)
+    return redirect(cognito_login_url, code=302)
 
 ### Get and verify token by authorization code
 
