@@ -1,11 +1,41 @@
 # cognito-python-helper
 
-Helper methods for AWS Cognito.
+Helper methods for AWS Cognito User Pool.
+
+In this repository I will explain the expected flow of a program that uses cognito, and will present two main helper 
+methods - one to get or refresh cognito tokens, the other is to verify the id_token.
+
+Before you start, you should create a Cognito User Pool, add an App Client to it, and configure a cognito domain. 
+All of this can be done in the AWS Cognito console.
+
+*The flow assumes you are using Cognito Hosted UI, but the code can be useful for all cases*
+
+### Cognito config
+
+First you should set the config in ``config.py``.
+
+    cognito_config = {
+        # The region where your cognito is located
+        'region': 'us-west-2',
+    
+        # Cognito (AWS console) > User pool > App integration > Domain name
+        'domain': 'COGNITO_DOMAIN',
+    
+        # Cognito (AWS console) > User pool > General settings > App clients
+        'client_id': 'CLIENT_ID',
+        'client_secret': 'CLIENT_SECRET',
+    
+        # Cognito (AWS console) > User pool > General settings > Pool Id
+        'user_pool_id': 'USER_POOL_ID',
+    
+        # The URL you want to redirect to after authentication
+        'redirect_uri': 'https://YOUR_DOMAIN/login/',
+    }
 
 ## Flow:
 
-1) User lands in our website for the first time. They have no valid id_token. Redirect to ``cognito_login_url`` 
-   - Cognito Hosted UI.
+1) User lands in our website for the first time. They are not authenticated. Redirect to ``cognito_login_url`` - this 
+is the **Cognito Hosted UI**.
 2) In the hosted UI, they successfully log in.
 3) User is redirected to ``redirect_uri``, with request parameter ``code=11111111-2222-3333-4444-555555555555``
 4) We get the cognito id_token, access_token & secret_token, by ``get_cognito_tokens(code=code)``.
@@ -23,6 +53,8 @@ Helper methods for AWS Cognito.
    ``get_cognito_tokens(refresh_token=refresh_token)``
 7) After 30 days, refresh token expires. The user should be redirected to the hosted UI and will have to log in again.
 
+##
+
 ### When the user is not logged in, redirect them to ``cognito_login_url``
 
     from config import cognito_login_url
@@ -36,7 +68,7 @@ Helper methods for AWS Cognito.
     id_token, access_token, refresh_token = get_cognito_tokens(code=code)
     decoded_id_token = decode_verify_jwt(id_token)
     
-### decoded_id_token contains info about this user like email, name etc.
+### The ``decoded_id_token`` contains info about this user like email, name etc.
 
     user_email = decoded_id_token['email']
 
