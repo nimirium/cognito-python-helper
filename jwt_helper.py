@@ -9,9 +9,6 @@ from requests.auth import HTTPBasicAuth
 from config import cognito_config
 
 
-
-
-
 class CognitoAuthenticationError(Exception):
     pass
 
