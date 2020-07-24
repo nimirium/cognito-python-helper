@@ -1,3 +1,6 @@
+__author__ = 'Sophie Fogel'
+
+
 cognito_config = {
     # The region where your cognito is located
     'region': 'us-west-2',

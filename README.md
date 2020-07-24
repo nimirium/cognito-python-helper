@@ -49,7 +49,7 @@ this is the **Cognito Hosted UI**.
     ** more info here: https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html
 
 5) Store these tokens for the user
-6) After an hour, id_token and access_token are expired. Backed code should automatically refresh it by using 
+6) After an hour, id_token and access_token are expired. Backed code can automatically refresh it by using 
    ``get_cognito_tokens(refresh_token=refresh_token)``
 7) After 30 days, refresh token expires. The user should be redirected to the hosted UI and will have to log in again.
 
